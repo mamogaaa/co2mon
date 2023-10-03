@@ -2,7 +2,7 @@ project(co2mond)
 cmake_minimum_required(VERSION 2.8)
 
 find_package(PkgConfig)
-pkg_search_module(HIDAPI REQUIRED hidapi-libusb hidapi)
+find_package(hidapi REQUIRED)
 
 include_directories(
     ../libco2mon/include

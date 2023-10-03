@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 find_package(PkgConfig)
 # hidapi-libusb - Ubuntu 14.04 (trusty)
 # hidapi        - homebrew on OS X 10.10 (Yosemite)
-pkg_search_module(HIDAPI REQUIRED hidapi-libusb hidapi)
+find_package(hidapi REQUIRED)
 
 include_directories(
     include
@@ -27,8 +27,7 @@ configure_file(
 
 aux_source_directory(src SRC_LIST)
 add_library(co2mon ${SRC_LIST})
-target_link_libraries(co2mon
-    ${HIDAPI_LIBRARIES})
+target_link_libraries(co2mon PRIVATE hidapi::hidapi)
 set_target_properties(co2mon PROPERTIES
     SOVERSION 1)
 
