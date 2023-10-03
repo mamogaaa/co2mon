@@ -7,6 +7,7 @@ git submodule update --init --recursive
 sudo apt-get update
 sudo apt-get install -y libudev-dev libusb-1.0-0-dev cmake pkg-config libhidapi-libusb0
 
+SOURCE_DIR=$(pwd)
 BUILD_DIR=$(pwd)/build
 HIDAPI_BUILD_DIR=$(pwd)/build/hidapi
 HIDAPI_SOURCE_DIR=$(pwd)/contrib/hidapi
@@ -22,3 +23,8 @@ cd $BUILD_DIR
 cmake ..
 make
 sudo make install
+
+sudo cp $SOURCE_DIR/co2mond.service /etc/systemd/system/co2mond.service
+sudo chmod 664 /etc/systemd/system/co2mond.service
+sudo systemctl daemon-reload
+sudo systemctl start co2mond
