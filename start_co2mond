@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+trap '' PIPE
+
 echo "!!!!!! Starting co2mond"
 CMD="/usr/local/bin/co2mond -P 0.0.0.0:8080"
-yes phrase | $CMD || "!!!!!! co2mond exited with code $?"
+$CMD || "!!!!!! co2mond exited with code $?"

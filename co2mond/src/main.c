@@ -693,7 +693,7 @@ int main(int argc, char *argv[])
 
         if (signal(SIGPIPE, SIG_IGN) != 0)
         {
-            err(EXIT_FAILURE, "signal(SIGPIPE, SIG_IGN)");
+            // err(EXIT_FAILURE, "signal(SIGPIPE, SIG_IGN)");
         }
 
         free(copy);
