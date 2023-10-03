@@ -6,10 +6,7 @@ After=multi-user.target
 Type=simple
 User=root
 ExecStart=/usr/local/bin/co2mond -P 0.0.0.0:8080
-
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=co2mond
+IgnoreSIGPIPE=true
 
 [Install]
 WantedBy=multi-user.target
