@@ -1,5 +1,6 @@
 [Unit]
 Description=CO2 Monitor Daemon
+After=multi-user.target
 
 [Service]
 Type=simple
