@@ -2,6 +2,7 @@
 Description=CO2 Monitor Daemon
 
 [Service]
+Type=simple
 ExecStart=/usr/local/bin/co2mond -P 0.0.0.0:8080
 
 [Install]
