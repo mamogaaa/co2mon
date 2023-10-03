@@ -28,4 +28,4 @@ sudo cp $SOURCE_DIR/start_co2mond /usr/local/bin/start_co2mond
 sudo cp $SOURCE_DIR/co2mond.service /etc/systemd/system/co2mond.service
 sudo chmod 664 /etc/systemd/system/co2mond.service
 sudo systemctl daemon-reload
-sudo systemctl start co2mond
+sudo systemctl restart co2mond
