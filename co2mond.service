@@ -4,6 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
+User=root
 ExecStart=/usr/local/bin/co2mond -P 0.0.0.0:8080
 
 [Install]
