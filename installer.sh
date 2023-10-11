@@ -22,7 +22,7 @@ sudo cmake --build . --target install
 cd $BUILD_DIR
 cmake ..
 make
-sudo make install
+sudo cp ./co2mond/co2mond /usr/local/bin/co2mond
 
 sudo cp $SOURCE_DIR/start_co2mond /usr/local/bin/start_co2mond
 sudo cp $SOURCE_DIR/co2mond.service /etc/systemd/system/co2mond.service
