@@ -8,9 +8,14 @@ set -e
 
 # Source Home Assistant helper functions if available
 if [ -f /usr/bin/bashio ]; then
-    source /usr/bin/bashio
-    # Parse configuration using bashio
-    DEVICE_PATH=$(bashio::config 'device_path')
+    # Check if bashio functions are available
+    if command -v bashio >/dev/null 2>&1; then
+        # Parse configuration using bashio
+        DEVICE_PATH=$(bashio::config 'device_path' || echo "auto")
+    else
+        # Fallback if bashio functions not working
+        DEVICE_PATH=${DEVICE_PATH:-"auto"}
+    fi
 else
     # Fallback to environment variables or defaults
     DEVICE_PATH=${DEVICE_PATH:-"auto"}
