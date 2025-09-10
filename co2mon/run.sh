@@ -35,9 +35,14 @@ if [ "${DEVICE_PATH}" != "auto" ] && [ -n "${DEVICE_PATH}" ]; then
     echo "Using specific device path: ${DEVICE_PATH}"
 fi
 
-# Add metrics port
-ARGS="${ARGS} -P 0.0.0.0:${METRICS_PORT}"
-echo "Exposing metrics on port: ${METRICS_PORT}"
+# Add metrics port (co2mond runs on 8081, nginx proxies on 8080)
+ARGS="${ARGS} -P 127.0.0.1:8081"
+echo "CO2 daemon listening on 127.0.0.1:8081"
+echo "Nginx proxy listening on port: ${METRICS_PORT}"
+
+# Start nginx
+echo "Starting nginx proxy..."
+nginx
 
 # Handle signals gracefully
 cleanup() {

@@ -11,7 +11,8 @@ RUN apk add --no-cache \
     build-base \
     git \
     usbutils \
-    bash
+    bash \
+    nginx
 
 # Set working directory
 WORKDIR /usr/src
@@ -36,6 +37,9 @@ RUN cp build/co2mond/co2mond /usr/local/bin/ && \
 # Copy udev rules for device access
 RUN mkdir -p /etc/udev/rules.d && \
     cp udevrules/99-co2mon.rules /etc/udev/rules.d/
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy startup script
 COPY run.sh /
