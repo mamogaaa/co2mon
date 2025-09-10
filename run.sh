@@ -10,38 +10,20 @@ set -e
 if [ -f /usr/bin/bashio ]; then
     source /usr/bin/bashio
     # Parse configuration using bashio
-    PROMETHEUS_PORT=$(bashio::config 'prometheus_port' 2>/dev/null || echo "8080")
-    DATA_DIR=$(bashio::config 'data_dir' 2>/dev/null || echo "/data")
-    LOG_LEVEL=$(bashio::config 'log_level' 2>/dev/null || echo "info")
-    PRINT_UNKNOWN=$(bashio::config 'print_unknown' 2>/dev/null || echo "false")
-    DEVICE_PATH=$(bashio::config 'device_path' 2>/dev/null || echo "")
+    DEVICE_PATH=$(bashio::config 'device_path')
 else
     # Fallback to environment variables or defaults
-    PROMETHEUS_PORT=${PROMETHEUS_PORT:-8080}
-    DATA_DIR=${DATA_DIR:-"/data"}
-    LOG_LEVEL=${LOG_LEVEL:-"info"}
-    PRINT_UNKNOWN=${PRINT_UNKNOWN:-"false"}
-    DEVICE_PATH=${DEVICE_PATH:-""}
+    DEVICE_PATH=${DEVICE_PATH:-"auto"}
 fi
 
 echo "Starting CO2 Monitor daemon..."
-echo "Prometheus port: ${PROMETHEUS_PORT}"
-echo "Data directory: ${DATA_DIR}"
-echo "Log level: ${LOG_LEVEL}"
+echo "Device Path: ${DEVICE_PATH}"
 
-# Ensure data directory exists
-mkdir -p "${DATA_DIR}"
+# Build command arguments
+ARGS=""
 
-# Build command arguments (no -d flag for containers)
-ARGS="-P 0.0.0.0:${PROMETHEUS_PORT} -D ${DATA_DIR}"
-
-# Add optional arguments
-if [ "${PRINT_UNKNOWN}" = "true" ]; then
-    ARGS="${ARGS} -u"
-    echo "Unknown values printing enabled"
-fi
-
-if [ -n "${DEVICE_PATH}" ]; then
+# Add device path if not auto
+if [ "${DEVICE_PATH}" != "auto" ] && [ -n "${DEVICE_PATH}" ]; then
     ARGS="${ARGS} -f ${DEVICE_PATH}"
     echo "Using specific device path: ${DEVICE_PATH}"
 fi

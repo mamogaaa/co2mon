@@ -1,0 +1,33 @@
+name: CO2 Monitor
+version: "1.0.0"
+slug: co2mon
+description: CO2 Monitor daemon for USB CO2 sensors (TFA AIRCO2NTROL MINI and compatible)
+url: https://github.com/dmage/co2mon
+arch:
+  - armhf
+  - armv7
+  - aarch64
+  - amd64
+  - i386
+startup: system
+boot: auto
+init: false
+privileged:
+  - SYS_RAWIO
+devices:
+  - /dev/hidraw0
+  - /dev/hidraw1
+  - /dev/hidraw2
+  - /dev/hidraw3
+  - /dev/hidraw4
+  - /dev/hidraw5
+  - /dev/hidraw6
+  - /dev/hidraw7
+  - /dev/hidraw8
+  - /dev/hidraw9
+udev: true
+options:
+  device_path: "auto"
+schema:
+  device_path: str
+image: homeassistant/{arch}-co2mon
