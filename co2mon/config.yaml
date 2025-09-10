@@ -30,4 +30,3 @@ options:
   device_path: "auto"
 schema:
   device_path: str
-image: homeassistant/{arch}-co2mon
