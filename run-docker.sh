@@ -1,15 +1,20 @@
 #!/bin/bash
 # Simple script to run CO2 Monitor Docker container interactively
 
+# Exit on any error
+set -e
+
 # Unset proxy variables to avoid connection issues
 unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
 
 IMAGE_NAME="co2mon-addon"
 PORT="8989"
 
-# Build the Docker image first
+# Build the Docker image first from co2mon subdirectory
 echo "Building Docker image: ${IMAGE_NAME}"
+cd co2mon
 unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && docker build -t ${IMAGE_NAME} .
+cd ..
 
 # Build device arguments for CO2 sensor
 DEVICE_ARGS=""
