@@ -14,8 +14,8 @@
         }
         
         body {
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            color: #00ff41;
+            background: #2d3142;
+            color: #7fb069;
             font-family: 'Orbitron', monospace;
             height: 100vh;
             display: flex;
@@ -27,97 +27,115 @@
         
         .container {
             text-align: center;
-            max-width: 800px;
-            width: 100%;
-            padding: 40px;
-            background: rgba(0, 255, 65, 0.05);
-            border: 2px solid #00ff41;
-            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            padding: 30px;
+            background: #1a1a1a;
+            border: 3px solid #333;
+            border-radius: 15px;
             box-shadow: 
-                0 0 20px rgba(0, 255, 65, 0.3),
-                inset 0 0 20px rgba(0, 255, 65, 0.1);
-            animation: glow 2s ease-in-out infinite alternate;
+                inset 0 0 0 2px #666,
+                0 0 20px rgba(0, 0, 0, 0.8);
+            position: relative;
         }
         
-        @keyframes glow {
-            from { box-shadow: 0 0 20px rgba(0, 255, 65, 0.3), inset 0 0 20px rgba(0, 255, 65, 0.1); }
-            to { box-shadow: 0 0 40px rgba(0, 255, 65, 0.5), inset 0 0 30px rgba(0, 255, 65, 0.2); }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            background: #0f0f0f;
+            border-radius: 8px;
+            z-index: -1;
+            border: 1px solid #444;
         }
         
         .title {
-            font-size: 2.5rem;
-            font-weight: 900;
-            margin-bottom: 30px;
-            text-shadow: 0 0 20px #00ff41;
-            letter-spacing: 3px;
+            font-size: 1.2rem;
+            font-weight: normal;
+            margin-bottom: 25px;
+            color: #555;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
         
         .metrics {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
         }
         
         .metric {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid #00ff41;
-            border-radius: 15px;
-            padding: 30px;
-            min-width: 250px;
+            background: #0a0a0a;
+            border: 2px inset #333;
+            border-radius: 8px;
+            padding: 20px 15px;
+            min-width: 200px;
             position: relative;
-            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
         }
         
         .metric::before {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #00ff41, transparent, #00ff41);
-            border-radius: 15px;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            background: #060606;
+            border-radius: 4px;
             z-index: -1;
-            animation: rotate 3s linear infinite;
-        }
-        
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
         
         .metric-label {
-            font-size: 1.2rem;
-            font-weight: 400;
-            margin-bottom: 10px;
-            color: #8bb8f8;
+            font-size: 0.8rem;
+            font-weight: normal;
+            margin-bottom: 8px;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .metric-value {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: 900;
             line-height: 1;
-            text-shadow: 0 0 15px currentColor;
-            animation: pulse 1.5s ease-in-out infinite;
+            color: #7fb069;
+            font-family: 'Orbitron', monospace;
+            text-shadow: 
+                0 0 5px #7fb069,
+                0 0 10px #7fb069,
+                0 0 15px #7fb069;
+            filter: contrast(1.5) brightness(1.2);
+            letter-spacing: 3px;
+            position: relative;
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+        .metric-value::before {
+            content: attr(data-value);
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: #1a2a1a;
+            text-shadow: none;
+            z-index: -1;
         }
         
         .metric-unit {
-            font-size: 1.5rem;
-            font-weight: 400;
-            margin-top: 5px;
-            color: #ffa500;
+            font-size: 1rem;
+            font-weight: normal;
+            margin-top: 3px;
+            color: #555;
+            text-transform: uppercase;
         }
         
-        .co2-good { color: #00ff41; }
-        .co2-warning { color: #ffff00; }
-        .co2-danger { color: #ff4444; }
+        .co2-good { color: #7fb069; }
+        .co2-warning { color: #d4a574; }
+        .co2-danger { color: #c85250; }
         
         .status {
             margin-top: 20px;
@@ -235,12 +253,12 @@
                 <div class="metrics">
                     <div class="metric">
                         <div class="metric-label">CO2 LEVEL</div>
-                        <div class="metric-value ${co2Status.class}">${metrics.co2}</div>
+                        <div class="metric-value ${co2Status.class}" data-value="8888">${metrics.co2}</div>
                         <div class="metric-unit">PPM</div>
                     </div>
                     <div class="metric">
                         <div class="metric-label">TEMPERATURE</div>
-                        <div class="metric-value">${metrics.temperature.toFixed(1)}</div>
+                        <div class="metric-value" data-value="88.8">${metrics.temperature.toFixed(1)}</div>
                         <div class="metric-unit">°C</div>
                     </div>
                 </div>
