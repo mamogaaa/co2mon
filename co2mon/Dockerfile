@@ -1,20 +1,17 @@
 ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
-# Set shell
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-# Install dependencies (based on installer.sh)
-RUN apt-get update && apt-get install -y \
-    libudev-dev \
-    libusb-1.0-0-dev \
+# Install dependencies using apk (Alpine Linux)
+RUN apk add --no-cache \
+    eudev-dev \
+    libusb-dev \
     cmake \
-    pkg-config \
-    libhidapi-libusb0 \
-    build-essential \
+    pkgconfig \
+    hidapi-dev \
+    build-base \
     git \
     usbutils \
-    && rm -rf /var/lib/apt/lists/*
+    bash
 
 # Set working directory
 WORKDIR /usr/src
@@ -25,18 +22,12 @@ COPY . .
 # Initialize git submodules and build HIDAPI (following installer.sh)
 RUN git submodule update --init --recursive
 
-# Build HIDAPI from source
-RUN rm -rf build && \
-    mkdir -p build/hidapi && \
-    cd build/hidapi && \
-    cmake ../../contrib/hidapi \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_INSTALL_PREFIX=/usr && \
-    cmake --build . && \
-    cmake --build . --target install
+# Since hidapi-dev is available, we can skip building from source
+# Just ensure we have the library installed
 
 # Build co2mon main project
-RUN cd build && \
+RUN mkdir -p build && \
+    cd build && \
     cmake .. \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX=/usr && \
