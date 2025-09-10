@@ -1,5 +1,5 @@
-ARG BUILD_FROM=ubuntu:22.04
-FROM $BUILD_FROM
+ARG BUILD_FROM
+FROM ${BUILD_FROM}
 
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
