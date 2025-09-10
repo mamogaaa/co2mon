@@ -9,18 +9,22 @@ set -e
 # Source Home Assistant helper functions if available
 # Temporarily disable exit-on-error for bashio config
 DEVICE_PATH="auto"
+METRICS_PORT="8080"
 if [ -f /usr/bin/bashio ]; then
     set +e
     # Try to get config, with error handling
     DEVICE_PATH=$(bashio::config 'device_path' 2>/dev/null || echo "auto")
+    METRICS_PORT=$(bashio::config 'metrics_port' 2>/dev/null || echo "8080")
     set -e
 else
     # Fallback to environment variables or defaults
     DEVICE_PATH=${DEVICE_PATH:-"auto"}
+    METRICS_PORT=${METRICS_PORT:-"8080"}
 fi
 
 echo "Starting CO2 Monitor daemon..."
 echo "Device Path: ${DEVICE_PATH}"
+echo "Metrics Port: ${METRICS_PORT}"
 
 # Build command arguments
 ARGS=""
@@ -30,6 +34,10 @@ if [ "${DEVICE_PATH}" != "auto" ] && [ -n "${DEVICE_PATH}" ]; then
     ARGS="${ARGS} -f ${DEVICE_PATH}"
     echo "Using specific device path: ${DEVICE_PATH}"
 fi
+
+# Add metrics port
+ARGS="${ARGS} -P 0.0.0.0:${METRICS_PORT}"
+echo "Exposing metrics on port: ${METRICS_PORT}"
 
 # Handle signals gracefully
 cleanup() {

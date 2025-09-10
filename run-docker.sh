@@ -8,7 +8,8 @@ set -e
 unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
 
 IMAGE_NAME="co2mon-addon"
-PORT="8989"
+HOST_PORT="8989"
+CONTAINER_PORT="8080"
 
 # Build the Docker image first from co2mon subdirectory
 echo "Building Docker image: ${IMAGE_NAME}"
@@ -29,7 +30,7 @@ DEVICE_ARGS="$DEVICE_ARGS --device=/dev/bus/usb"
 docker run -it --rm \
     --privileged \
     ${DEVICE_ARGS} \
-    -p ${PORT}:8080 \
+    -p ${HOST_PORT}:${CONTAINER_PORT} \
     -e PROMETHEUS_PORT=8080 \
     -e DATA_DIR=/data \
     -e LOG_LEVEL=info \
