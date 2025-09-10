@@ -1,5 +1,5 @@
 name: CO2 Monitor
-version: "1.0.8"
+version: "1.0.9"
 slug: co2mon
 description: CO2 Monitor daemon for USB CO2 sensors (TFA AIRCO2NTROL MINI and compatible)
 url: https://github.com/dmage/co2mon
