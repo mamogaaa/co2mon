@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO2 Monitor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00ff41;
+            font-family: 'Orbitron', monospace;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            background: rgba(0, 255, 65, 0.05);
+            border: 2px solid #00ff41;
+            border-radius: 20px;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 65, 0.3),
+                inset 0 0 20px rgba(0, 255, 65, 0.1);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(0, 255, 65, 0.3), inset 0 0 20px rgba(0, 255, 65, 0.1); }
+            to { box-shadow: 0 0 40px rgba(0, 255, 65, 0.5), inset 0 0 30px rgba(0, 255, 65, 0.2); }
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px #00ff41;
+            letter-spacing: 3px;
+        }
+        
+        .metrics {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .metric {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #00ff41;
+            border-radius: 15px;
+            padding: 30px;
+            min-width: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff41, transparent, #00ff41);
+            border-radius: 15px;
+            z-index: -1;
+            animation: rotate 3s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .metric-label {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: #8bb8f8;
+        }
+        
+        .metric-value {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1;
+            text-shadow: 0 0 15px currentColor;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .metric-unit {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-top: 5px;
+            color: #ffa500;
+        }
+        
+        .co2-good { color: #00ff41; }
+        .co2-warning { color: #ffff00; }
+        .co2-danger { color: #ff4444; }
+        
+        .status {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .status-good { border: 1px solid #00ff41; color: #00ff41; }
+        .status-warning { border: 1px solid #ffff00; color: #ffff00; }
+        .status-danger { border: 1px solid #ff4444; color: #ff4444; }
+        
+        .error {
+            color: #ff4444;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading {
+            color: #8bb8f8;
+            font-size: 1.5rem;
+            animation: blink 1s linear infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+        
+        .timestamp {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            font-family: monospace;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .metrics {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .metric {
+                min-width: 200px;
+            }
+            
+            .metric-value {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">CO2 MONITOR</div>
+        <div id="content">
+            <div class="loading">INITIALIZING...</div>
+        </div>
+    </div>
+    
+    <div class="timestamp" id="timestamp"></div>
+    
+    <script>
+        let updateInterval;
+        
+        function updateTimestamp() {
+            const now = new Date();
+            document.getElementById('timestamp').textContent = now.toLocaleString();
+        }
+        
+        function getCO2Status(co2) {
+            if (co2 < 400) return { class: 'co2-good', status: 'EXCELLENT', statusClass: 'status-good' };
+            if (co2 < 800) return { class: 'co2-good', status: 'GOOD', statusClass: 'status-good' };
+            if (co2 < 1000) return { class: 'co2-warning', status: 'MODERATE', statusClass: 'status-warning' };
+            if (co2 < 1500) return { class: 'co2-warning', status: 'POOR', statusClass: 'status-warning' };
+            return { class: 'co2-danger', status: 'DANGEROUS', statusClass: 'status-danger' };
+        }
+        
+        function parseMetrics(text) {
+            const lines = text.split('\n');
+            const metrics = {};
+            
+            for (const line of lines) {
+                if (line.startsWith('co2mon_temp_celsius ')) {
+                    metrics.temperature = parseFloat(line.split(' ')[1]);
+                } else if (line.startsWith('co2mon_co2_ppm ')) {
+                    metrics.co2 = parseInt(line.split(' ')[1]);
+                } else if (line.startsWith('co2mon_device_errors_total ')) {
+                    metrics.errors = parseInt(line.split(' ')[1]);
+                } else if (line.startsWith('co2mon_heartbeat_time_seconds ')) {
+                    metrics.heartbeat = parseInt(line.split(' ')[1]);
+                }
+            }
+            
+            return metrics;
+        }
+        
+        function displayMetrics(metrics) {
+            const co2Status = getCO2Status(metrics.co2);
+            
+            const content = `
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">CO2 LEVEL</div>
+                        <div class="metric-value ${co2Status.class}">${metrics.co2}</div>
+                        <div class="metric-unit">PPM</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">TEMPERATURE</div>
+                        <div class="metric-value">${metrics.temperature.toFixed(1)}</div>
+                        <div class="metric-unit">°C</div>
+                    </div>
+                </div>
+                <div class="status ${co2Status.statusClass}">
+                    AIR QUALITY: ${co2Status.status}
+                </div>
+            `;
+            
+            document.getElementById('content').innerHTML = content;
+        }
+        
+        function displayError(message) {
+            document.getElementById('content').innerHTML = `
+                <div class="error">
+                    ERROR: ${message}
+                </div>
+            `;
+        }
+        
+        async function fetchMetrics() {
+            try {
+                const response = await fetch('/metrics');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const text = await response.text();
+                const metrics = parseMetrics(text);
+                
+                if (metrics.co2 !== undefined && metrics.temperature !== undefined) {
+                    displayMetrics(metrics);
+                } else {
+                    throw new Error('Invalid metrics data');
+                }
+                
+            } catch (error) {
+                displayError(error.message);
+            }
+            
+            updateTimestamp();
+        }
+        
+        function startMonitoring() {
+            fetchMetrics(); // Initial fetch
+            updateInterval = setInterval(fetchMetrics, 5000); // Update every 5 seconds
+        }
+        
+        function stopMonitoring() {
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+        }
+        
+        // Start monitoring when page loads
+        window.addEventListener('load', startMonitoring);
+        
+        // Stop monitoring when page unloads
+        window.addEventListener('beforeunload', stopMonitoring);
+        
+        // Update timestamp every second
+        setInterval(updateTimestamp, 1000);
+        updateTimestamp();
+    </script>
+</body>
+</html>
