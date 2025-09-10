@@ -262,7 +262,7 @@
         
         async function fetchMetrics() {
             try {
-                const response = await fetch('/metrics');
+                const response = await fetch('./metrics');
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
                 }

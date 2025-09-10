@@ -20,9 +20,6 @@ WORKDIR /usr/src
 # Copy source code
 COPY . .
 
-# Copy web interface
-COPY index.html /usr/src/index.html
-
 # Since hidapi-dev package is available, we don't need git submodules
 
 # Build co2mon main project
