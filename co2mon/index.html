@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CO2 Monitor</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-        
         * {
             margin: 0;
             padding: 0;
@@ -14,150 +12,178 @@
         }
         
         body {
-            background: #2d3142;
-            color: #7fb069;
-            font-family: 'Orbitron', monospace;
+            background: #222;
+            color: #0f0;
+            font-family: Arial, sans-serif;
             height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            padding: 20px;
         }
         
-        .container {
-            text-align: center;
-            max-width: 600px;
-            width: 90%;
-            padding: 30px;
-            background: #1a1a1a;
-            border: 3px solid #333;
+        .display {
+            background: #111;
+            border: 8px solid #444;
             border-radius: 15px;
+            padding: 40px;
             box-shadow: 
-                inset 0 0 0 2px #666,
-                0 0 20px rgba(0, 0, 0, 0.8);
-            position: relative;
-        }
-        
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            background: #0f0f0f;
-            border-radius: 8px;
-            z-index: -1;
-            border: 1px solid #444;
+                inset 0 0 20px #000,
+                0 0 20px #000;
+            max-width: 800px;
+            width: 100%;
         }
         
         .title {
+            text-align: center;
             font-size: 1.2rem;
-            font-weight: normal;
-            margin-bottom: 25px;
-            color: #555;
+            color: #666;
+            margin-bottom: 30px;
             letter-spacing: 2px;
-            text-transform: uppercase;
         }
         
-        .metrics {
+        .metrics-container {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 20px;
+            gap: 40px;
             flex-wrap: wrap;
-            gap: 15px;
         }
         
-        .metric {
-            background: #0a0a0a;
-            border: 2px inset #333;
-            border-radius: 8px;
-            padding: 20px 15px;
-            min-width: 200px;
-            position: relative;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
-        }
-        
-        .metric::before {
-            content: '';
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            right: 5px;
-            bottom: 5px;
-            background: #060606;
-            border-radius: 4px;
-            z-index: -1;
+        .metric-section {
+            text-align: center;
+            min-width: 300px;
         }
         
         .metric-label {
-            font-size: 0.8rem;
-            font-weight: normal;
-            margin-bottom: 8px;
-            color: #444;
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 15px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         
-        .metric-value {
-            font-size: 3.5rem;
-            font-weight: 900;
-            line-height: 1;
-            color: #7fb069;
-            font-family: 'Orbitron', monospace;
-            text-shadow: 
-                0 0 5px #7fb069,
-                0 0 10px #7fb069,
-                0 0 15px #7fb069;
-            filter: contrast(1.5) brightness(1.2);
-            letter-spacing: 3px;
+        .seven-segment-display {
+            background: #000;
+            border: 2px inset #333;
+            border-radius: 10px;
+            padding: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
             position: relative;
         }
         
-        .metric-value::before {
-            content: attr(data-value);
+        .digit-container {
+            display: inline-block;
+            margin: 0 5px;
+        }
+        
+        .digit {
+            width: 60px;
+            height: 100px;
+            position: relative;
+            display: inline-block;
+            margin: 0 2px;
+        }
+        
+        .digit .segment {
             position: absolute;
-            top: 0;
-            left: 0;
-            color: #1a2a1a;
-            text-shadow: none;
-            z-index: -1;
+            background: #0f0;
+            box-shadow: 0 0 10px #0f0;
         }
         
-        .metric-unit {
-            font-size: 1rem;
-            font-weight: normal;
-            margin-top: 3px;
-            color: #555;
-            text-transform: uppercase;
+        .digit .segment.off {
+            background: #002200;
+            box-shadow: none;
         }
         
-        .co2-good { color: #7fb069; }
-        .co2-warning { color: #d4a574; }
-        .co2-danger { color: #c85250; }
+        /* Horizontal segments */
+        .digit .segment.a,
+        .digit .segment.d,
+        .digit .segment.g {
+            width: 40px;
+            height: 6px;
+            left: 10px;
+        }
+        
+        .digit .segment.a { top: 0; }
+        .digit .segment.d { bottom: 0; }
+        .digit .segment.g { top: 47px; }
+        
+        /* Vertical segments */
+        .digit .segment.b,
+        .digit .segment.c,
+        .digit .segment.e,
+        .digit .segment.f {
+            width: 6px;
+            height: 40px;
+        }
+        
+        .digit .segment.b,
+        .digit .segment.f { left: 0; }
+        .digit .segment.c,
+        .digit .segment.e { right: 0; }
+        
+        .digit .segment.b,
+        .digit .segment.c { top: 7px; }
+        .digit .segment.e,
+        .digit .segment.f { bottom: 7px; }
+        
+        .decimal-point {
+            width: 6px;
+            height: 6px;
+            background: #0f0;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 5px;
+            right: -15px;
+            box-shadow: 0 0 10px #0f0;
+        }
+        
+        .decimal-point.off {
+            background: #002200;
+            box-shadow: none;
+        }
+        
+        .unit {
+            color: #666;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
         
         .status {
-            margin-top: 20px;
-            font-size: 1.1rem;
-            padding: 10px 20px;
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px 30px;
+            border: 2px solid #666;
             border-radius: 10px;
-            background: rgba(0, 0, 0, 0.3);
+            background: #111;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
-        .status-good { border: 1px solid #00ff41; color: #00ff41; }
-        .status-warning { border: 1px solid #ffff00; color: #ffff00; }
-        .status-danger { border: 1px solid #ff4444; color: #ff4444; }
+        .status.good { 
+            border-color: #0f0; 
+            color: #0f0; 
+            background: #001100;
+        }
         
-        .error {
-            color: #ff4444;
-            font-size: 1.2rem;
-            text-align: center;
-            padding: 20px;
+        .status.warning { 
+            border-color: #ff0; 
+            color: #ff0;
+            background: #111100;
+        }
+        
+        .status.danger { 
+            border-color: #f00; 
+            color: #f00;
+            background: #110000;
         }
         
         .loading {
-            color: #8bb8f8;
+            text-align: center;
+            color: #666;
             font-size: 1.5rem;
             animation: blink 1s linear infinite;
         }
@@ -167,52 +193,121 @@
             51%, 100% { opacity: 0.3; }
         }
         
+        .error {
+            color: #f00;
+            text-align: center;
+            font-size: 1.2rem;
+            padding: 20px;
+        }
+        
         .timestamp {
-            position: absolute;
+            position: fixed;
             bottom: 20px;
             right: 20px;
-            font-size: 0.9rem;
-            color: #666;
+            color: #444;
+            font-size: 0.8rem;
             font-family: monospace;
         }
         
-        @media (max-width: 600px) {
-            .container {
-                margin: 20px;
+        @media (max-width: 768px) {
+            .display {
                 padding: 20px;
             }
             
-            .title {
-                font-size: 2rem;
-            }
-            
-            .metrics {
+            .metrics-container {
                 flex-direction: column;
-                align-items: center;
+                gap: 20px;
             }
             
-            .metric {
-                min-width: 200px;
+            .digit {
+                width: 45px;
+                height: 75px;
             }
             
-            .metric-value {
-                font-size: 3rem;
+            .digit .segment.a,
+            .digit .segment.d,
+            .digit .segment.g {
+                width: 30px;
+                left: 7px;
             }
+            
+            .digit .segment.b,
+            .digit .segment.c,
+            .digit .segment.e,
+            .digit .segment.f {
+                height: 30px;
+            }
+            
+            .digit .segment.g { top: 35px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="title">CO2 MONITOR</div>
+    <div class="display">
+        <div class="title">CO2 ENVIRONMENTAL MONITOR</div>
         <div id="content">
-            <div class="loading">INITIALIZING...</div>
+            <div class="loading">INITIALIZING SYSTEM...</div>
         </div>
     </div>
     
     <div class="timestamp" id="timestamp"></div>
     
     <script>
-        let updateInterval;
+        // 7-segment digit patterns
+        const digitPatterns = {
+            '0': ['a', 'b', 'c', 'd', 'e', 'f'],
+            '1': ['b', 'c'],
+            '2': ['a', 'b', 'g', 'e', 'd'],
+            '3': ['a', 'b', 'g', 'c', 'd'],
+            '4': ['f', 'g', 'b', 'c'],
+            '5': ['a', 'f', 'g', 'c', 'd'],
+            '6': ['a', 'f', 'g', 'e', 'd', 'c'],
+            '7': ['a', 'b', 'c'],
+            '8': ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+            '9': ['a', 'b', 'c', 'd', 'f', 'g'],
+            ' ': []
+        };
+        
+        function createDigit(value, showDecimal = false) {
+            const pattern = digitPatterns[value] || [];
+            const segments = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+            
+            let html = '<div class="digit">';
+            segments.forEach(segment => {
+                const isOn = pattern.includes(segment);
+                html += `<div class="segment ${segment} ${isOn ? '' : 'off'}"></div>`;
+            });
+            if (showDecimal) {
+                html += '<div class="decimal-point"></div>';
+            }
+            html += '</div>';
+            
+            return html;
+        }
+        
+        function createDisplay(value, decimals = 0) {
+            const str = value.toString();
+            const parts = str.split('.');
+            let html = '<div class="digit-container">';
+            
+            // Integer part
+            const intPart = parts[0].padStart(4, ' ');
+            for (let i = 0; i < intPart.length; i++) {
+                const showDecimal = (decimals > 0 && i === intPart.length - 1);
+                html += createDigit(intPart[i], showDecimal);
+            }
+            
+            // Decimal part
+            if (decimals > 0 && parts[1]) {
+                const decPart = parts[1].padEnd(decimals, '0').substring(0, decimals);
+                for (let i = 0; i < decPart.length; i++) {
+                    html += createDigit(decPart[i]);
+                }
+            }
+            
+            html += '</div>';
+            return html;
+        }
         
         function updateTimestamp() {
             const now = new Date();
@@ -220,11 +315,11 @@
         }
         
         function getCO2Status(co2) {
-            if (co2 < 400) return { class: 'co2-good', status: 'EXCELLENT', statusClass: 'status-good' };
-            if (co2 < 800) return { class: 'co2-good', status: 'GOOD', statusClass: 'status-good' };
-            if (co2 < 1000) return { class: 'co2-warning', status: 'MODERATE', statusClass: 'status-warning' };
-            if (co2 < 1500) return { class: 'co2-warning', status: 'POOR', statusClass: 'status-warning' };
-            return { class: 'co2-danger', status: 'DANGEROUS', statusClass: 'status-danger' };
+            if (co2 < 400) return { status: 'EXCELLENT', class: 'good' };
+            if (co2 < 800) return { status: 'GOOD', class: 'good' };
+            if (co2 < 1000) return { status: 'MODERATE', class: 'warning' };
+            if (co2 < 1500) return { status: 'POOR', class: 'warning' };
+            return { status: 'DANGEROUS', class: 'danger' };
         }
         
         function parseMetrics(text) {
@@ -238,8 +333,6 @@
                     metrics.co2 = parseInt(line.split(' ')[1]);
                 } else if (line.startsWith('co2mon_device_errors_total ')) {
                     metrics.errors = parseInt(line.split(' ')[1]);
-                } else if (line.startsWith('co2mon_heartbeat_time_seconds ')) {
-                    metrics.heartbeat = parseInt(line.split(' ')[1]);
                 }
             }
             
@@ -250,20 +343,24 @@
             const co2Status = getCO2Status(metrics.co2);
             
             const content = `
-                <div class="metrics">
-                    <div class="metric">
-                        <div class="metric-label">CO2 LEVEL</div>
-                        <div class="metric-value ${co2Status.class}" data-value="8888">${metrics.co2}</div>
-                        <div class="metric-unit">PPM</div>
+                <div class="metrics-container">
+                    <div class="metric-section">
+                        <div class="metric-label">CO2 Concentration</div>
+                        <div class="seven-segment-display">
+                            ${createDisplay(metrics.co2)}
+                        </div>
+                        <div class="unit">PPM</div>
                     </div>
-                    <div class="metric">
-                        <div class="metric-label">TEMPERATURE</div>
-                        <div class="metric-value" data-value="88.8">${metrics.temperature.toFixed(1)}</div>
-                        <div class="metric-unit">°C</div>
+                    <div class="metric-section">
+                        <div class="metric-label">Temperature</div>
+                        <div class="seven-segment-display">
+                            ${createDisplay(metrics.temperature.toFixed(1), 1)}
+                        </div>
+                        <div class="unit">°C</div>
                     </div>
                 </div>
-                <div class="status ${co2Status.statusClass}">
-                    AIR QUALITY: ${co2Status.status}
+                <div class="status ${co2Status.class}">
+                    Air Quality: ${co2Status.status}
                 </div>
             `;
             
@@ -273,7 +370,7 @@
         function displayError(message) {
             document.getElementById('content').innerHTML = `
                 <div class="error">
-                    ERROR: ${message}
+                    SYSTEM ERROR: ${message}
                 </div>
             `;
         }
@@ -291,7 +388,7 @@
                 if (metrics.co2 !== undefined && metrics.temperature !== undefined) {
                     displayMetrics(metrics);
                 } else {
-                    throw new Error('Invalid metrics data');
+                    throw new Error('INVALID SENSOR DATA');
                 }
                 
             } catch (error) {
@@ -302,21 +399,12 @@
         }
         
         function startMonitoring() {
-            fetchMetrics(); // Initial fetch
-            updateInterval = setInterval(fetchMetrics, 5000); // Update every 5 seconds
+            fetchMetrics();
+            setInterval(fetchMetrics, 5000);
         }
         
-        function stopMonitoring() {
-            if (updateInterval) {
-                clearInterval(updateInterval);
-            }
-        }
-        
-        // Start monitoring when page loads
+        // Start monitoring
         window.addEventListener('load', startMonitoring);
-        
-        // Stop monitoring when page unloads
-        window.addEventListener('beforeunload', stopMonitoring);
         
         // Update timestamp every second
         setInterval(updateTimestamp, 1000);
