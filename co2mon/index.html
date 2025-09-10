@@ -253,19 +253,19 @@
     <div class="timestamp" id="timestamp"></div>
     
     <script>
-        // 7-segment digit patterns
+        // 7-segment digit patterns (corrected)
         const digitPatterns = {
-            '0': ['a', 'b', 'c', 'd', 'e', 'f'],
-            '1': ['b', 'c'],
-            '2': ['a', 'b', 'g', 'e', 'd'],
-            '3': ['a', 'b', 'g', 'c', 'd'],
-            '4': ['f', 'g', 'b', 'c'],
-            '5': ['a', 'f', 'g', 'c', 'd'],
-            '6': ['a', 'f', 'g', 'e', 'd', 'c'],
-            '7': ['a', 'b', 'c'],
-            '8': ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
-            '9': ['a', 'b', 'c', 'd', 'f', 'g'],
-            ' ': []
+            '0': ['a', 'b', 'c', 'd', 'e', 'f'],        // 0: all except middle
+            '1': ['b', 'c'],                            // 1: right side only
+            '2': ['a', 'b', 'g', 'e', 'd'],            // 2: top, top-right, middle, bottom-left, bottom
+            '3': ['a', 'b', 'g', 'c', 'd'],            // 3: top, right side, middle, bottom
+            '4': ['f', 'g', 'b', 'c'],                 // 4: left-top, middle, right side
+            '5': ['a', 'f', 'g', 'c', 'd'],            // 5: top, left-top, middle, right-bottom, bottom
+            '6': ['a', 'f', 'g', 'e', 'd', 'c'],       // 6: top, left side, middle, right-bottom, bottom
+            '7': ['a', 'b', 'c'],                      // 7: top, right side
+            '8': ['a', 'b', 'c', 'd', 'e', 'f', 'g'],  // 8: all segments
+            '9': ['a', 'b', 'c', 'd', 'f', 'g'],       // 9: all except bottom-left
+            ' ': []                                     // space: no segments
         };
         
         function createDigit(value, showDecimal = false) {
