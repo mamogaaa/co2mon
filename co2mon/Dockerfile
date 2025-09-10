@@ -19,11 +19,7 @@ WORKDIR /usr/src
 # Copy source code
 COPY . .
 
-# Initialize git submodules and build HIDAPI (following installer.sh)
-RUN git submodule update --init --recursive
-
-# Since hidapi-dev is available, we can skip building from source
-# Just ensure we have the library installed
+# Since hidapi-dev package is available, we don't need git submodules
 
 # Build co2mon main project
 RUN mkdir -p build && \
