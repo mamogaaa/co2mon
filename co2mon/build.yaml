@@ -1,9 +1,9 @@
 build_from:
-  armhf: ghcr.io/home-assistant/armhf-base:3.20
-  armv7: ghcr.io/home-assistant/armv7-base:3.20
-  aarch64: ghcr.io/home-assistant/aarch64-base:3.20
-  amd64: ghcr.io/home-assistant/amd64-base:3.20
-  i386: ghcr.io/home-assistant/i386-base:3.20
+  armhf: ubuntu:22.04
+  armv7: ubuntu:22.04
+  aarch64: ubuntu:22.04
+  amd64: ubuntu:22.04
+  i386: ubuntu:22.04
 args:
   BUILD_ARCH: "{arch}"
   BUILD_VERSION: "{version}"
