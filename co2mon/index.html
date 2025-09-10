@@ -5,16 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CO2 Monitor</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            background: #222;
-            color: #0f0;
-            font-family: Arial, sans-serif;
+            font-family: "Helvetica", sans-serif;
+            font-size: 18px;
+            color: #ffffff;
+            background-color: #000000;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -78,71 +73,336 @@
             margin: 0 5px;
         }
         
+        /* 7-segment display from CodePen */
         .digit {
-            width: 60px;
-            height: 100px;
-            position: relative;
-            display: inline-block;
-            margin: 0 2px;
+            /* options */
+            --aspectRatio: .57;
+            --height: 100px;
+            /* this is half the thickness of a segment expressed as a fraction of the height */
+            /* change the thickness of the segments by changing the decimal number */
+            --segment-thickness: .14;
+            --half-segment-minor-dimention: calc(var(--height) * var(--segment-thickness) / 2);
+            --segment-spacing: 5%;
+            --on-color: rgba(0, 220, 0);
+            --off-color: rgba(0, 220, 0, .2);
+            
+            height: var(--height);
+            width: calc(var(--height) * var(--aspectRatio));
+            
+            margin: 2px;
+            
+            display: inline-grid;
+            grid-template-columns: var(--half-segment-minor-dimention)
+                var(--half-segment-minor-dimention)
+                1fr
+                var(--half-segment-minor-dimention)
+                var(--half-segment-minor-dimention);
+            grid-template-rows: var(--half-segment-minor-dimention)
+                var(--half-segment-minor-dimention)
+                1fr
+                var(--half-segment-minor-dimention)
+                var(--half-segment-minor-dimention)
+                1fr
+                var(--half-segment-minor-dimention)
+                var(--half-segment-minor-dimention);
+            
+            transform: skew(-3deg);
         }
-        
+
         .digit .segment {
-            position: absolute;
-            background: #0f0;
-            box-shadow: 0 0 10px #0f0;
+            width: 100%;
+            height: 100%;
+            line-height: 0;
+            display: flex;
+            align-items: center;
         }
-        
-        .digit .segment.off {
-            background: #002200;
-            box-shadow: none;
+
+        .digit .segment.segA,
+        .digit .segment.segG,
+        .digit .segment.segD {
+            flex-direction: column;
         }
-        
-        /* Horizontal segments */
-        .digit .segment.a,
-        .digit .segment.d,
-        .digit .segment.g {
-            width: 40px;
-            height: 6px;
-            left: 10px;
+
+        .digit .segment.segA {
+            grid-area: 1 / 2 / 3 / 5;
         }
-        
-        .digit .segment.a { top: 0; }
-        .digit .segment.d { bottom: 0; }
-        .digit .segment.g { top: 47px; }
-        
-        /* Vertical segments */
-        .digit .segment.b,
-        .digit .segment.c,
-        .digit .segment.e,
-        .digit .segment.f {
-            width: 6px;
-            height: 40px;
+
+        .digit .segment.segB {
+            grid-area: 2 / 4 / 5 / 6;
         }
-        
-        .digit .segment.b,
-        .digit .segment.f { left: 0; }
-        .digit .segment.c,
-        .digit .segment.e { right: 0; }
-        
-        .digit .segment.b,
-        .digit .segment.c { top: 7px; }
-        .digit .segment.e,
-        .digit .segment.f { bottom: 7px; }
-        
-        .decimal-point {
-            width: 6px;
-            height: 6px;
-            background: #0f0;
-            border-radius: 50%;
-            position: absolute;
-            bottom: 5px;
-            right: -15px;
-            box-shadow: 0 0 10px #0f0;
+
+        .digit .segment.segC {
+            grid-area: 5 / 4 / 8 / 6;
         }
-        
-        .decimal-point.off {
-            background: #002200;
-            box-shadow: none;
+
+        .digit .segment.segD {
+            grid-area: 7 / 2 / 9 / 5;
+        }
+
+        .digit .segment.segE {
+            grid-area: 5 / 1 / 8 / 3;
+        }
+
+        .digit .segment.segF {
+            grid-area: 2 / 1 / 5 / 3;
+        }
+
+        .digit .segment.segG {
+            grid-area: 4 / 2 / 6 / 5;
+        }
+
+        .digit .segment::before,
+        .digit .segment::after {
+            display: block;
+            content: "";
+            box-sizing: border-box;
+        }
+
+        /* horizontal segments */
+        .digit .segment.segA::before,
+        .digit .segment.segA::after,
+        .digit .segment.segG::before,
+        .digit .segment.segG::after,
+        .digit .segment.segD::before,
+        .digit .segment.segD::after {
+            border-right: var(--half-segment-minor-dimention) solid transparent;
+            border-left: var(--half-segment-minor-dimention) solid transparent;
+            width: calc(100% - var(--segment-spacing)); /* not 100% so there's spacing between the segments */
+            height: 0;
+        }
+
+        .digit .segment.segA::before,
+        .digit .segment.segG::before,
+        .digit .segment.segD::before {
+            border-bottom: var(--half-segment-minor-dimention) solid var(--off-color);
+        }
+
+        .digit .segment.segA::after,
+        .digit .segment.segG::after,
+        .digit .segment.segD::after {
+            border-top: var(--half-segment-minor-dimention) solid var(--off-color);
+        }
+
+        .digit .segment.on.segA::before,
+        .digit .segment.on.segG::before,
+        .digit .segment.on.segD::before {
+            border-bottom: var(--half-segment-minor-dimention) solid var(--on-color);
+        }
+
+        .digit .segment.on.segA::after,
+        .digit .segment.on.segG::after,
+        .digit .segment.on.segD::after {
+            border-top: var(--half-segment-minor-dimention) solid var(--on-color);
+        }
+
+        /* vertical segments */
+        .digit .segment.segB::before,
+        .digit .segment.segB::after,
+        .digit .segment.segC::before,
+        .digit .segment.segC::after,
+        .digit .segment.segE::before,
+        .digit .segment.segE::after,
+        .digit .segment.segF::before,
+        .digit .segment.segF::after {
+            border-top: var(--half-segment-minor-dimention) solid transparent;
+            border-bottom: var(--half-segment-minor-dimention) solid transparent;
+            width: 0;
+            height: calc(100% - var(--segment-spacing));
+        }
+
+        .digit .segment.segB::before,
+        .digit .segment.segC::before,
+        .digit .segment.segE::before,
+        .digit .segment.segF::before {
+            border-right: var(--half-segment-minor-dimention) solid var(--off-color);
+        }
+
+        .digit .segment.segB::after,
+        .digit .segment.segC::after,
+        .digit .segment.segE::after,
+        .digit .segment.segF::after {
+            border-left: var(--half-segment-minor-dimention) solid var(--off-color);
+        }
+
+        .digit .segment.on.segB::before,
+        .digit .segment.on.segC::before,
+        .digit .segment.on.segE::before,
+        .digit .segment.on.segF::before {
+            border-right: var(--half-segment-minor-dimention) solid var(--on-color);
+        }
+
+        .digit .segment.on.segB::after,
+        .digit .segment.on.segC::after,
+        .digit .segment.on.segE::after,
+        .digit .segment.on.segF::after {
+            border-left: var(--half-segment-minor-dimention) solid var(--on-color);
+        }
+
+        /******* digit classes *******/
+
+        .digit.digZero .segment.segA::before,
+        .digit.digZero .segment.segA::after,
+        .digit.digZero .segment.segD::before,
+        .digit.digZero .segment.segD::after {
+            border-top-color: var(--on-color);
+            border-bottom-color: var(--on-color);
+        }
+        .digit.digZero .segment.segB::before,
+        .digit.digZero .segment.segB::after,
+        .digit.digZero .segment.segC::before,
+        .digit.digZero .segment.segC::after,
+        .digit.digZero .segment.segE::before,
+        .digit.digZero .segment.segE::after,
+        .digit.digZero .segment.segF::before,
+        .digit.digZero .segment.segF::after {
+            border-left-color: var(--on-color);
+            border-right-color: var(--on-color);
+        }
+
+        .digit.digOne .segment.segB::before,
+        .digit.digOne .segment.segB::after,
+        .digit.digOne .segment.segC::before,
+        .digit.digOne .segment.segC::after {
+            border-left-color: var(--on-color);
+            border-right-color: var(--on-color);
+        }
+
+        .digit.digTwo .segment.segA::before,
+        .digit.digTwo .segment.segA::after,
+        .digit.digTwo .segment.segD::before,
+        .digit.digTwo .segment.segD::after,
+        .digit.digTwo .segment.segG::before,
+        .digit.digTwo .segment.segG::after {
+            border-top-color: var(--on-color);
+            border-bottom-color: var(--on-color);
+        }
+        .digit.digTwo .segment.segB::before,
+        .digit.digTwo .segment.segB::after,
+        .digit.digTwo .segment.segE::before,
+        .digit.digTwo .segment.segE::after {
+            border-left-color: var(--on-color);
+            border-right-color: var(--on-color);
+        }
+
+        .digit.digThree .segment.segA::before,
+        .digit.digThree .segment.segA::after,
+        .digit.digThree .segment.segD::before,
+        .digit.digThree .segment.segD::after,
+        .digit.digThree .segment.segG::before,
+        .digit.digThree .segment.segG::after {
+            border-top-color: var(--on-color);
+            border-bottom-color: var(--on-color);
+        }
+        .digit.digThree .segment.segB::before,
+        .digit.digThree .segment.segB::after,
+        .digit.digThree .segment.segC::before,
+        .digit.digThree .segment.segC::after {
+            border-left-color: var(--on-color);
+            border-right-color: var(--on-color);
+        }
+
+        .digit.digFour .segment.segG::before,
+        .digit.digFour .segment.segG::after {
+            border-top-color: var(--on-color);
+            border-bottom-color: var(--on-color);
+        }
+        .digit.digFour .segment.segB::before,
+        .digit.digFour .segment.segB::after,
+        .digit.digFour .segment.segC::before,
+        .digit.digFour .segment.segC::after,
+        .digit.digFour .segment.segF::before,
+        .digit.digFour .segment.segF::after {
+            border-left-color: var(--on-color);
+            border-right-color: var(--on-color);
+        }
+
+        .digit.digFive .segment.segA::before,
+        .digit.digFive .segment.segA::after,
+        .digit.digFive .segment.segD::before,
+        .digit.digFive .segment.segD::after,
+        .digit.digFive .segment.segG::before,
+        .digit.digFive .segment.segG::after {
+            border-top-color: var(--on-color);
+            border-bottom-color: var(--on-color);
+        }
+        .digit.digFive .segment.segC::before,
+        .digit.digFive .segment.segC::after,
+        .digit.digFive .segment.segF::before,
+        .digit.digFive .segment.segF::after {
+            border-left-color: var(--on-color);
+            border-right-color: var(--on-color);
+        }
+
+        .digit.digSix .segment.segA::before,
+        .digit.digSix .segment.segA::after,
+        .digit.digSix .segment.segD::before,
+        .digit.digSix .segment.segD::after,
+        .digit.digSix .segment.segG::before,
+        .digit.digSix .segment.segG::after {
+            border-top-color: var(--on-color);
+            border-bottom-color: var(--on-color);
+        }
+        .digit.digSix .segment.segC::before,
+        .digit.digSix .segment.segC::after,
+        .digit.digSix .segment.segE::before,
+        .digit.digSix .segment.segE::after,
+        .digit.digSix .segment.segF::before,
+        .digit.digSix .segment.segF::after {
+            border-left-color: var(--on-color);
+            border-right-color: var(--on-color);
+        }
+
+        .digit.digSeven .segment.segA::before,
+        .digit.digSeven .segment.segA::after {
+            border-top-color: var(--on-color);
+            border-bottom-color: var(--on-color);
+        }
+        .digit.digSeven .segment.segB::before,
+        .digit.digSeven .segment.segB::after,
+        .digit.digSeven .segment.segC::before,
+        .digit.digSeven .segment.segC::after {
+            border-left-color: var(--on-color);
+            border-right-color: var(--on-color);
+        }
+
+        .digit.digEight .segment.segA::before,
+        .digit.digEight .segment.segA::after,
+        .digit.digEight .segment.segD::before,
+        .digit.digEight .segment.segD::after,
+        .digit.digEight .segment.segG::before,
+        .digit.digEight .segment.segG::after {
+            border-top-color: var(--on-color);
+            border-bottom-color: var(--on-color);
+        }
+        .digit.digEight .segment.segB::before,
+        .digit.digEight .segment.segB::after,
+        .digit.digEight .segment.segC::before,
+        .digit.digEight .segment.segC::after,
+        .digit.digEight .segment.segE::before,
+        .digit.digEight .segment.segE::after,
+        .digit.digEight .segment.segF::before,
+        .digit.digEight .segment.segF::after {
+            border-left-color: var(--on-color);
+            border-right-color: var(--on-color);
+        }
+
+        .digit.digNine .segment.segA::before,
+        .digit.digNine .segment.segA::after,
+        .digit.digNine .segment.segD::before,
+        .digit.digNine .segment.segD::after,
+        .digit.digNine .segment.segG::before,
+        .digit.digNine .segment.segG::after {
+            border-top-color: var(--on-color);
+            border-bottom-color: var(--on-color);
+        }
+        .digit.digNine .segment.segB::before,
+        .digit.digNine .segment.segB::after,
+        .digit.digNine .segment.segC::before,
+        .digit.digNine .segment.segC::after,
+        .digit.digNine .segment.segF::before,
+        .digit.digNine .segment.segF::after {
+            border-left-color: var(--on-color);
+            border-right-color: var(--on-color);
         }
         
         .unit {
@@ -164,8 +424,8 @@
         }
         
         .status.good { 
-            border-color: #0f0; 
-            color: #0f0; 
+            border-color: #0dc; 
+            color: #0dc; 
             background: #001100;
         }
         
@@ -209,6 +469,22 @@
             font-family: monospace;
         }
         
+        .decimal-point {
+            width: 8px;
+            height: 8px;
+            background: var(--on-color);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 10px;
+            right: -15px;
+            box-shadow: 0 0 5px var(--on-color);
+        }
+        
+        .decimal-point.off {
+            background: var(--off-color);
+            box-shadow: none;
+        }
+        
         @media (max-width: 768px) {
             .display {
                 padding: 20px;
@@ -220,25 +496,8 @@
             }
             
             .digit {
-                width: 45px;
-                height: 75px;
+                --height: 75px;
             }
-            
-            .digit .segment.a,
-            .digit .segment.d,
-            .digit .segment.g {
-                width: 30px;
-                left: 7px;
-            }
-            
-            .digit .segment.b,
-            .digit .segment.c,
-            .digit .segment.e,
-            .digit .segment.f {
-                height: 30px;
-            }
-            
-            .digit .segment.g { top: 35px; }
         }
     </style>
 </head>
@@ -253,30 +512,31 @@
     <div class="timestamp" id="timestamp"></div>
     
     <script>
-        // 7-segment digit patterns (from CodePen example)
-        const digitPatterns = {
-            '0': ['a', 'b', 'c', 'd', 'e', 'f'],        // 0
-            '1': ['b', 'c'],                            // 1  
-            '2': ['a', 'b', 'g', 'e', 'd'],            // 2
-            '3': ['a', 'b', 'g', 'c', 'd'],            // 3
-            '4': ['f', 'b', 'g', 'c'],                 // 4
-            '5': ['a', 'f', 'g', 'c', 'd'],            // 5
-            '6': ['a', 'f', 'g', 'e', 'd', 'c'],       // 6
-            '7': ['a', 'b', 'c'],                      // 7
-            '8': ['a', 'b', 'c', 'd', 'e', 'f', 'g'],  // 8
-            '9': ['a', 'b', 'c', 'f', 'g', 'd'],       // 9
-            ' ': []                                     // space
-        };
-        
         function createDigit(value, showDecimal = false) {
-            const pattern = digitPatterns[value] || [];
-            const segments = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+            const digitClass = {
+                '0': 'digZero',
+                '1': 'digOne', 
+                '2': 'digTwo',
+                '3': 'digThree',
+                '4': 'digFour',
+                '5': 'digFive',
+                '6': 'digSix',
+                '7': 'digSeven',
+                '8': 'digEight',
+                '9': 'digNine',
+                ' ': ''
+            };
             
-            let html = '<div class="digit">';
-            segments.forEach(segment => {
-                const isOn = pattern.includes(segment);
-                html += `<div class="segment ${segment} ${isOn ? '' : 'off'}"></div>`;
-            });
+            const className = digitClass[value] || '';
+            
+            let html = `<div class="digit ${className}">`;
+            html += '<div class="segment segA"></div>';
+            html += '<div class="segment segB"></div>';
+            html += '<div class="segment segC"></div>';
+            html += '<div class="segment segD"></div>';
+            html += '<div class="segment segE"></div>';
+            html += '<div class="segment segF"></div>';
+            html += '<div class="segment segG"></div>';
             if (showDecimal) {
                 html += '<div class="decimal-point"></div>';
             }
