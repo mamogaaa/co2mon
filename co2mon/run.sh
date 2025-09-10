@@ -4,22 +4,23 @@
 # Runs the CO2 Monitor daemon
 # ==============================================================================
 
-set -e
+# Temporarily disable exit-on-error for configuration parsing
+set +e
 
 # Source Home Assistant helper functions if available
+DEVICE_PATH="auto"
 if [ -f /usr/bin/bashio ]; then
-    # Check if bashio functions are available
-    if command -v bashio >/dev/null 2>&1; then
-        # Parse configuration using bashio
-        DEVICE_PATH=$(bashio::config 'device_path' || echo "auto")
-    else
-        # Fallback if bashio functions not working
-        DEVICE_PATH=${DEVICE_PATH:-"auto"}
-    fi
+    # Try to source bashio functions
+    source /usr/bin/bashio 2>/dev/null
+    # Try to get config, fallback to default if it fails
+    DEVICE_PATH=$(bashio::config 'device_path' 2>/dev/null || echo "auto")
 else
     # Fallback to environment variables or defaults
     DEVICE_PATH=${DEVICE_PATH:-"auto"}
 fi
+
+# Re-enable exit-on-error
+set -e
 
 echo "Starting CO2 Monitor daemon..."
 echo "Device Path: ${DEVICE_PATH}"
